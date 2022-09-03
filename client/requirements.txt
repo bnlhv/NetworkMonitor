@@ -1,0 +1,6 @@
+pydantic
+loguru
+httpx
+fire
+pandas
+matplotlib

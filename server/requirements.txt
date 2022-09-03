@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+pydantic
+loguru
+psutil
+motor
+pymongo
+rq
+fastapi-utils
+redis
+beanie
+singleton-decorator
+asyncinit
