@@ -100,7 +100,8 @@ async def update_thresholds(
     :return: JSON response
     """
     if dl_min:
-        if (dl_max and dl_min >= dl_max) or (dl_min >= settings.DL_MAX_NIC_RATE_THRESHOLD):
+        if (dl_max and dl_min >= dl_max) or (
+                dl_min >= settings.DL_MAX_NIC_RATE_THRESHOLD):
             raise HTTPException(detail="Min threshold can't be greater than "
                                        "or equal to Max threshold.",
                                 status_code=status.HTTP_400_BAD_REQUEST)
@@ -112,7 +113,8 @@ async def update_thresholds(
                                 status_code=status.HTTP_400_BAD_REQUEST)
         settings.DL_MAX_NIC_RATE_THRESHOLD = dl_max
     if ul_min:
-        if (ul_max and ul_min >= ul_max) or (ul_min >= settings.UL_MAX_NIC_RATE_THRESHOLD):
+        if (ul_max and ul_min >= ul_max) or (
+                ul_min >= settings.UL_MAX_NIC_RATE_THRESHOLD):
             raise HTTPException(detail="Min threshold can't be greater than "
                                        "or equal to Max threshold.",
                                 status_code=status.HTTP_400_BAD_REQUEST)

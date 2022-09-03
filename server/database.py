@@ -1,5 +1,4 @@
 """ Database setup """
-import asyncio
 
 from asyncinit import asyncinit
 from beanie import init_beanie

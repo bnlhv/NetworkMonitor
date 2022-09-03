@@ -1,39 +1,16 @@
 """ Asynchronous tasks module """
 import asyncio
-import functools
 import time
-from typing import cast, Dict, Tuple, List
+from typing import cast, Dict, Tuple
 
 import loguru
 import psutil
-from beanie import Document
 from fastapi_utils.tasks import repeat_every
 from loguru import logger
 
 from config import settings
-from database import Database
 from exceptions import NicDownException
 from models import NIC, BandwidthSample
-
-
-def worker_first_db_init(documents: List[Document]):
-    """ Decorator to check if worker needs db initialization. """
-
-    def decorator(func):
-        @functools.wraps(func)
-        async def wrapper(*args, **kwargs):
-            logger.info("Checking if db needs to be restarted")
-            logger.info(f"going to init? {settings.WORKER_INITIALIZED}")
-            if not settings.WORKER_INITIALIZED:
-                logger.info("Restart DB!")
-                Database()
-                settings.WORKER_INITIALIZED = True
-                logger.info(f"Changed to {settings.WORKER_INITIALIZED}!")
-            return func(*args, **kwargs)
-
-        return wrapper
-
-    return decorator
 
 
 async def populate_nics() -> None:
@@ -94,3 +71,5 @@ async def keep_alive_nics() -> None:
         if nic.name not in current_live_nics:
             logger.warning(f"Detected exception for nic: {nic}")
             raise NicDownException(f"NIC {nic} is down")
+    else:
+        logger.debug("All nics alive")
