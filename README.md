@@ -1,4 +1,4 @@
-# Network Monitor
+# Q1 - Network Monitor
 ## _User Manual Guide_
 
 Network Monitor is a cli tool to control network interface monitoring on your computer.
@@ -20,6 +20,9 @@ This solution is based on python programming language.
     f. `python client/main.py change_max_ul_threshold {NEW_THRESHOLD}`: Update the max upload threshold value in server.
     g. `python client/main.py get_snapshot`: Get pic of line plot of upload and download rates in the last minute, the file would save in plot dorectory.
 7. Integrate with the server via api calls through `http://localhost:8000/...` (recommended to use fastapi openapi & swagger integration in  `http://localhost:8000/docs/`)
+8. To make this program run on boot, follow these steps:
+    a. `Unix` - enter this command to crontab file `@reboot ./path/to/script/unix-script.sh`
+    b. `Windows` - Go to Run window (Winkey+R) and run `shell:startup` and a file explorer in the right place would open. Paste the `win-script.bat` file in that directory (don't forget to update file paths inside the .bat file)
 
 ## Features
 - Get online network interfaces
@@ -59,3 +62,44 @@ This solution is based on python programming language.
 2. I've turned on the `--reload` flag on the server so in every change the server renders.
 3. I used swagger docs to integrate with the server.
 4. I've tested the specific deterministic functions with `Fire` cli tool.
+
+# Q2 - Pcap Parser
+### Answers
+1. Protocols and their meaning in .pcap file when browsing to www.example.com
+    a. `ICMP` - "Hello" protocol, 3rd layer (network) that sends and recieve packets via IP addresses. `ping` is an implementation of `ICMP`.
+    b. `UDP` - Transport layer protocol (4th), known for it's fast and non-reliable connection to destination. This is done because `UDP` doesn't check that data arrived and sends datagrams. Some `UDP` implementations are : `DNS`, `VOIP`, etc.
+    c. `TCP` - Transport layer protocol (4th), known for it's reliable manner. each new connections is done with the syn-ack mechanism flow. The destanation makes sure the segment arrived fully. It is used over applications that data transactions are atomic like `SSH`, `FTP`, `HTTP`, `HTTPS`, etc.
+    d. `DNS` - Domain Name System, works in Application layer protocol and over UDP/IP. This protocol is used for resolving names for humans to ip addresses to make internet browsing easier. The `DNS` protocol uses classes of servers, there is no one DNS for the world. When a standart `DNS` query isn't answer by local `DNS` then is moves up the chain for higher hierarchy until it gets the right ip address. 
+    e. `QUIC` - Designed by google, the protocol is used over more than 50% of connections from Chrome web-browser to google's servers. The main idea of the protocol is multiplexing multiple `UDP` connections and manage them, makes the protocol more efficient of `TCP` for some client-server communications.
+
+## Pcap parser script 
+1. You'll need python in your machine.
+2. Run `cd path/to/pcap_parser/` & `pip install -r requirements.txt` 
+3. Run the script as cli - `python path/to/pcap_parser/main.py {PCAP_FILE_PATH}`
+4. _www.ynet.co.il_ - the answer the script has of this is very legit. This site serves in HTTPS protocol and not HTTP, therefore we see TLS encrypted connections from and to the site and not HTTP. In fact, the script is hardcoded with port 80 for the application gateway of HTTP protocol, if we'll change the hardcoded value to 443 (HTTPS) port we'll see the conversation from the client to server (syn-ack syncronize) but without the data (encrypted).
+
+# Q3 - code analysis
+```java
+void printPairs1(int[] array) {
+    for (int i = 0; i < array.length; i++) {
+        for (int j = 0; j < array.length; j++) {
+            system.out.println(array[i] + ", " + array[j]);
+        }
+    }
+}
+```
+1. This snippet produces n^2 combinations of the array with itself and print all the couple elements that can exsits.  
+2. Time complexity is O(n^2)
+
+# Q4 - code analysis
+```java
+void printPairs2(int[] arrayA, int[] arrayB) {
+    for (int i = 0; i < arrayA.length; i++) {
+        for (int j = 0; j < arrayB.length; j++) {
+            system.out.println(arrayA[i] + ", " + arrayB[j]);
+        }
+    }
+}
+```
+1. Time complexity is O(n*m) where each are length of the arrays respectivily.
+2. The difference from Q3 is that Q3 in a private case of Q4's snippet where n=m. When they aren't equal the time complexity changes accordingly.
