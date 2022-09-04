@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+from pathlib import Path
 
 import fire
 import pandas as pd
@@ -25,10 +26,9 @@ async def check_nic_threshold(nic_name: str) -> None:
 
     :param nic_name: The nic name (get from get_nics).
     """
-    url = f"{BASE_URL}/nics/check_nic_rate_threshold/"
-    params = {"nic_name": nic_name}
+    url = f"{BASE_URL}/nics/check_nic_rate_threshold/{nic_name}"
     async with AsyncClient(timeout=None) as client:
-        response = await client.get(url=url, params=params)
+        response = await client.get(url=url)
         logger.info(response.json())
 
 
@@ -87,15 +87,14 @@ async def get_snapshot(nic_name: str) -> None:
         response = await client.get(url=url)
         data = response.json()
         if data:
-            [print(v) for v in data]
-            timestamps = [f"{datetime(v['timestamp']).hour}:{datetime(v['timestamp']).minute}"
-                          for v in data]
+            timestamps = [v['timestamp'] for v in data]
             df = pd.DataFrame(data={
                 "upload": [v["upload"] for v in data],
                 "download": [v["download"] for v in data],
             }, index=timestamps)
             lines = df.plot.line()
-            lines.figure.savefig(f"{settings.PATH_TO_SAVE_PLOTS}/{timestamps[-1]}.jpeg")
+            lines.figure.figsize = (18,18)
+            lines.figure.savefig(Path.cwd() / Path("plots") / Path(f"{timestamps[-1]}.jpeg"))
         else:
             logger.debug("No data")
 

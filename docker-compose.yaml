@@ -9,14 +9,6 @@ services:
     volumes:
       - os_handler_db:/data/db
 
-  client:
-    container_name: "client"
-    build: ./client/.
-    volumes:
-      - ./plots:/plots
-    depends_on:
-      - database
-
 volumes:
     os_handler_db:
     plots:

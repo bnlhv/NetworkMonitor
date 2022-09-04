@@ -12,9 +12,9 @@ class Settings(BaseSettings):
     BW_DB_COLLECTION: str = "bandwidth_sample_collection"
 
     # Tasks configs
-    NETWORK_SLEEP_TIME: int = 5
-    INTERVAL_TASK_MONITOR_NICS: int = 5
-    INTERVAL_TASK_BW_SAMPLE: int = 10
+    NETWORK_SLEEP_TIME: int = 2
+    INTERVAL_TASK_MONITOR_NICS: int = 15
+    INTERVAL_TASK_BW_SAMPLE: int = 5
 
     # Represents Mbps
     DL_MIN_NIC_RATE_THRESHOLD: int = 0

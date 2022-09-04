@@ -1,11 +1,12 @@
 """ Controllers module for api contract with other apps """
 from datetime import datetime, timedelta
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from fastapi import APIRouter, status, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from loguru import logger
+from starlette.responses import Response
 
 from config import settings
 from models import NIC, BandwidthSample
@@ -26,7 +27,7 @@ async def get_nics() -> List[NIC]:
 async def get_nic_bandwidth_samples(
         nic_name: str,
         last_minutes: int = 1,
-) -> JSONResponse:
+) -> Union[Response, JSONResponse]:
     """
     Get all bandwidth samples of specific nic.
 
@@ -36,15 +37,14 @@ async def get_nic_bandwidth_samples(
     :raises: HTTPException: if the db doesn't contain this nic_id.
     """
     wanted_timestamp = datetime.now() - timedelta(minutes=last_minutes)
-
     bw_samples = await BandwidthSample.find(
         BandwidthSample.nic_name == nic_name,
     ).find(
-        BandwidthSample.timestamp <= wanted_timestamp,
+        BandwidthSample.timestamp > wanted_timestamp,
     ).sort("timestamp").to_list()
+
     if not bw_samples:
-        return JSONResponse(content="No data yet",
-                            status_code=status.HTTP_204_NO_CONTENT)
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
     return JSONResponse(content=jsonable_encoder(bw_samples),
                         status_code=status.HTTP_200_OK)
 
@@ -63,7 +63,7 @@ async def check_nic_rate_threshold(
     bw_samples = await BandwidthSample.find(
         BandwidthSample.nic_name == nic_name,
     ).find(
-        BandwidthSample.timestamp <= last_minute_timestamp,
+        BandwidthSample.timestamp > last_minute_timestamp,
     ).sort("timestamp").to_list()
 
     first_sample = bw_samples[0] if bw_samples else None
